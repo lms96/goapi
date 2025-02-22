@@ -39,6 +39,13 @@ func CreateStudent(c *gin.Context) {
 		return
 	}
 
+	if err := models.ValidateStudent(&student); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
 	database.DB.Create(&student)
 	c.JSON(http.StatusCreated, student)
 }
@@ -56,6 +63,13 @@ func EditStudent(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&student); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	if err := models.ValidateStudent(&student); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
